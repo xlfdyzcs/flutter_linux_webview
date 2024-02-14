@@ -39,6 +39,7 @@ G_BEGIN_DECLS
 #define FLUTTER_PLUGIN_EXPORT
 #endif
 
+typedef uint32_t uint32;
 typedef struct _FlutterLinuxWebviewPlugin FlutterLinuxWebviewPlugin;
 typedef struct {
   GObjectClass parent_class;

@@ -43,6 +43,9 @@
 #include "flutter_webview_handler.h"
 #include "include/cef_render_handler.h"
 
+typedef uint32_t uint32;
+typedef char16_t char16;
+
 // Provides the API to control a WebView. Unless otherwise indicated in the
 // comments, the methods of this class must be called on the CEF UI and the
 // callbacks are called on that thread.
