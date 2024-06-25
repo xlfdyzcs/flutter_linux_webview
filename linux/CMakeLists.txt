@@ -174,10 +174,10 @@ else()
   else()
     # linux x86_64
     set(WEBVIEW_CEF_DISTRIB_NAME
-      "cef_binary_121.3.7+g82c7c57+chromium-121.0.6167.160_linux64_minimal")
+      "cef_binary_126.2.7+g300bb05+chromium-126.0.6478.115_linux64_minimal")
     set(WEBVIEW_CEF_DISTRIB_URL
-      "https://cef-builds.spotifycdn.com/cef_binary_121.3.7%2Bg82c7c57%2Bchromium-121.0.6167.160_linux64_minimal.tar.bz2")
-    set(WEBVIEW_CEF_DISTRIB_HASH_SHA1 "8af0ac3c53f1cb40ba495ebc34d4c728d14765fb")
+      "https://cef-builds.spotifycdn.com/cef_binary_126.2.7%2Bg300bb05%2Bchromium-126.0.6478.115_linux64_minimal.tar.bz2")
+    set(WEBVIEW_CEF_DISTRIB_HASH_SHA1 "11befcb9ddc4abd8a79764f13b527073066888d1")
     set(WEBVIEW_CEF_BUILD_TYPE "Release")
   endif()
 endif()
