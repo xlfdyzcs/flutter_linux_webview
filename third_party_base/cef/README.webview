@@ -1,0 +1,12 @@
+Name: Chromium Embedded Framework (CEF)
+URL: https://bitbucket.org/chromiumembedded/cef/src/4664/
+Version: 96.0.18
+Revision: fe551e4054895193c50598e64085e46a1eda77b0
+License: BSD-3-Clause
+License File: src/LICENSE.txt
+
+Description:
+We use the following components:
+- Type definitions for transferring key input from the Dart side to the CEF side.
+- Off-screen rendering logic.
+- The tests/cefsimple/CMakeLists.txt.in file for building the subprocess executable.

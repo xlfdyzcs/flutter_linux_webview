@@ -1,0 +1,49 @@
+###
+### This file (.pubignore) should always be synced with .gitignore because
+### `pub pulish` will ignore .gitignore if this file exists.
+###
+
+### Copy of .gitignore
+
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# clangd integration
+**/.cache/clangd/
+
+
+# Flutter/Dart/Pub related
+# Libraries should not include pubspec.lock, per https://dart.dev/guides/libraries/private-files#pubspeclock.
+/pubspec.lock
+**/doc/api/
+.dart_tool/
+.packages
+build/
+linux/lib
+
+GPUCache
+linux/cef_binary*
+
+#
+# Additional ignore list for Pub
+#
+third_party_base/

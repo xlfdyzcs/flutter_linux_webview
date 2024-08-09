@@ -59,10 +59,10 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
-      - assets/www/index.html
-      - assets/www/styles/style.css
-      - assets/my_sample_audio.ogg
-      - assets/my_sample_video.webm
+      - lib/third_party/webview_flutter/example/assets/www/index.html
+      - lib/third_party/webview_flutter/example/assets/www/styles/style.css
+      - myassets/my_sample_audio.ogg
+      - myassets/my_sample_video.webm
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

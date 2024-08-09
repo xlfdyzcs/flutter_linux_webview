@@ -184,6 +184,7 @@ endif()
 
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${WEBVIEW_CEF_DISTRIB_NAME}")
   # Download the CEF binary distribution
+  message(STATUS "[flutter_linux_webview] Downloading the CEF binary distribution - ${WEBVIEW_CEF_DISTRIB_URL}")
   file(DOWNLOAD "${WEBVIEW_CEF_DISTRIB_URL}"
     "${CMAKE_CURRENT_SOURCE_DIR}/${WEBVIEW_CEF_DISTRIB_NAME}.tar.bz2"
     EXPECTED_HASH SHA1=${WEBVIEW_CEF_DISTRIB_HASH_SHA1}
@@ -201,38 +202,12 @@ endif()
 set(WEBVIEW_SUBPROCESS_PROJECT_NAME "flutter_webview_subprocess")
 
 function(patch_cef_distrib)
-  set(webview_subprocess_project_dest_dir
-    "${CMAKE_CURRENT_SOURCE_DIR}/${WEBVIEW_CEF_DISTRIB_NAME}/tests/${WEBVIEW_SUBPROCESS_PROJECT_NAME}")
   set(webview_subprocess_source_dir
     "${CMAKE_CURRENT_SOURCE_DIR}/subprocess")
-  file(MAKE_DIRECTORY ${webview_subprocess_project_dest_dir})
-  set(WEBVIEW_SUBPROCESS_SOURCES
-    flutter_webview_render_app.cc
-    flutter_webview_render_app.h
-    flutter_webview_subprocess.cc
-    flutter_webview_process_messages.cc
-    flutter_webview_process_messages.h
-  )
-
-  foreach(subprocess_file ${WEBVIEW_SUBPROCESS_SOURCES})
-    message(STATUS "[flutter_linux_webview] Creating a symbolic link\n"
-      "  '${webview_subprocess_project_dest_dir}/${subprocess_file}'\n"
-      "    -> '${webview_subprocess_source_dir}/src/${subprocess_file}'")
-    execute_process(WORKING_DIRECTORY ${webview_subprocess_project_dest_dir}
-      COMMAND "ln" "--symbolic" "--force" "${webview_subprocess_source_dir}/src/${subprocess_file}")
-  endforeach(subprocess_file)
-
-  message(STATUS "[flutter_linux_webview] Creating a symbolic link\n"
-    "  '${webview_subprocess_project_dest_dir}/CMakeLists.txt'\n"
-    "    -> '${webview_subprocess_source_dir}/src/CMakeLists_subprocess_project.txt'")
-  execute_process(WORKING_DIRECTORY ${webview_subprocess_project_dest_dir}
-    COMMAND "ln" "--symbolic" "--force"
-    "${webview_subprocess_source_dir}/src/CMakeLists_subprocess_project.txt" "CMakeLists.txt")
-
-  message(STATUS "[flutter_linux_webview] Patching CMakeLists.txt so that"
-    "it builds flutter_webview_subprocess target.")
+  message(STATUS "[flutter_linux_webview] Patching '${CMAKE_CURRENT_SOURCE_DIR}/${WEBVIEW_CEF_DISTRIB_NAME}/CMakeLists.txt' "
+    "so that it builds flutter_webview_subprocess target.")
   execute_process(
-    COMMAND "patch" "-N"
+    COMMAND "patch" "--forward" "--backup"
     ${CMAKE_CURRENT_SOURCE_DIR}/${WEBVIEW_CEF_DISTRIB_NAME}/CMakeLists.txt
     ${webview_subprocess_source_dir}/cef_distrib_patch/build_flutter_webview_subprocess.patch)
 endfunction(patch_cef_distrib)
@@ -265,6 +240,7 @@ add_library(${PLUGIN_NAME} SHARED
   "flutter_webview_app.cc"
   "flutter_webview_controller.cc"
   "flutter_webview_handler.cc"
+  "third_party/cef/src/tests/cefclient/browser/flutter_webview_osr_renderer.cc"
   "flutter_webview_types.cc"
   "subprocess/src/flutter_webview_process_messages.cc"
 )
@@ -334,7 +310,7 @@ function(install_executables)
 
   # The path of the sub-process executable file
   set(subprocess_exe_path
-    "${CMAKE_CURRENT_BINARY_DIR}/${WEBVIEW_CEF_DISTRIB_NAME}/tests/${WEBVIEW_SUBPROCESS_PROJECT_NAME}/$<CONFIG>/${WEBVIEW_SUBPROCESS_PROJECT_NAME}")
+    "${CMAKE_CURRENT_BINARY_DIR}/${WEBVIEW_CEF_DISTRIB_NAME}/${WEBVIEW_SUBPROCESS_PROJECT_NAME}/$<CONFIG>/${WEBVIEW_SUBPROCESS_PROJECT_NAME}")
   list(APPEND WEBVIEW_EXECUTABLE_LIST_TO_DEPLOY "${subprocess_exe_path}")
 
   # install the executables

@@ -26,39 +26,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// This file is based on https://bitbucket.org/chromiumembedded/cef/src/4664/tests/cefclient/browser/osr_renderer.cc
-// for off-screen rendering.
-
-// Copyright (c) 2013 The Chromium Embedded Framework Authors. All rights
-// reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-//    * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above
-// copyright notice, this list of conditions and the following disclaimer
-// in the documentation and/or other materials provided with the
-// distribution.
-//    * Neither the name of Google Inc. nor the name Chromium Embedded
-// Framework nor the names of its contributors may be used to endorse
-// or promote products derived from this software without specific prior
-// written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 #include "flutter_webview_handler.h"
 
 #include <GL/gl.h>
@@ -77,17 +44,6 @@
 #include "include/wrapper/cef_closure_task.h"
 #include "include/wrapper/cef_helpers.h"
 #include "subprocess/src/flutter_webview_process_messages.h"
-
-// DCHECK on gl errors.
-#if DCHECK_IS_ON()
-#define VERIFY_NO_ERROR                                                      \
-  {                                                                          \
-    int _gl_error = glGetError();                                            \
-    DCHECK(_gl_error == GL_NO_ERROR) << "glGetError returned " << _gl_error; \
-  }
-#else
-#define VERIFY_NO_ERROR
-#endif  // DCHECK_IS_ON()
 
 FlutterWebviewHandler::FlutterWebviewHandler(
     WebviewId webview_id,
@@ -111,9 +67,22 @@ FlutterWebviewHandler::FlutterWebviewHandler(
       webview_id_(webview_id),
       browser_state_(BrowserState::kBeforeCreated),
       browser_(nullptr),
-      native_texture_id_(params.native_texture_id),
-      view_width_(params.width),
-      view_height_(params.height) {}
+      renderer_(params.native_texture_id),
+      webview_width_(params.width),
+      webview_height_(params.height) {
+  // Ensure that width and height are greater than 0
+  if (webview_width_ <= 0 || webview_height_ <= 0) {
+    if (webview_width_ <= 0)
+      webview_width_ = 1;
+    if (webview_height_ <= 0)
+      webview_height_ = 1;
+    LOG(WARNING) << __FUNCTION__ << ": (" << params.width << ", "
+                 << params.height
+                 << ") was given. Width and height must be greater than 0. "
+                 << "(" << webview_width_ << ", " << webview_height_
+                 << ") is used instead.";
+  }
+}
 
 bool FlutterWebviewHandler::OnBeforePopup(
     CefRefPtr<CefBrowser> browser,
@@ -221,7 +190,7 @@ bool FlutterWebviewHandler::OnProcessMessageReceived(
   return false;
 }
 
-void FlutterWebviewHandler::SetViewRect(int width, int height) {
+void FlutterWebviewHandler::SetWebviewSize(int width, int height) {
   CEF_REQUIRE_UI_THREAD();
 
   if (width <= 0 || height <= 0) {
@@ -229,8 +198,8 @@ void FlutterWebviewHandler::SetViewRect(int width, int height) {
     return;
   }
 
-  view_width_ = width;
-  view_height_ = height;
+  webview_width_ = width;
+  webview_height_ = height;
 }
 
 void FlutterWebviewHandler::OnLoadingProgressChange(
@@ -298,8 +267,11 @@ void FlutterWebviewHandler::GetViewRect(CefRefPtr<CefBrowser> browser,
                                         CefRect& rect) {
   CEF_REQUIRE_UI_THREAD();
 
-  rect.width = view_width_;
-  rect.height = view_height_;
+  // After the webview controller resize the webview size, the browser calls
+  // this method to get the new size for OSR.
+
+  rect.width = webview_width_;
+  rect.height = webview_height_;
 }
 
 void FlutterWebviewHandler::OnPaint(CefRefPtr<CefBrowser> browser,
@@ -309,86 +281,11 @@ void FlutterWebviewHandler::OnPaint(CefRefPtr<CefBrowser> browser,
                                     int width,
                                     int height) {
   CEF_REQUIRE_UI_THREAD();
-  // Logics copied from cefclient/browser/osr_renderer.cc
 
   on_paint_begin_(webview_id_);
 
-  DCHECK_NE(native_texture_id_, 0U);
-  glBindTexture(GL_TEXTURE_2D, native_texture_id_);
-  VERIFY_NO_ERROR;
-
-  if (type == PET_VIEW) {
-    int old_width = view_width_;
-    int old_height = view_height_;
-
-    // TODO(Ino): dispatch resizing?
-    view_width_ = width;
-    view_height_ = height;
-
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, view_width_);
-    VERIFY_NO_ERROR;
-
-    if (old_width != view_width_ || old_height != view_height_ ||
-        (dirtyRects.size() == 1 &&
-         dirtyRects[0] == CefRect(0, 0, view_width_, view_height_))) {
-      // Update/resize the whole texture.
-      glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-      VERIFY_NO_ERROR;
-      glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-      VERIFY_NO_ERROR;
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, view_width_, view_height_, 0,
-                   GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
-      VERIFY_NO_ERROR;
-    } else {
-      // Update just the dirty rectangles.
-      CefRenderHandler::RectList::const_iterator i = dirtyRects.begin();
-      for (; i != dirtyRects.end(); ++i) {
-        const CefRect& rect = *i;
-        DCHECK(rect.x + rect.width <= view_width_);
-        DCHECK(rect.y + rect.height <= view_height_);
-        glPixelStorei(GL_UNPACK_SKIP_PIXELS, rect.x);
-        VERIFY_NO_ERROR;
-        glPixelStorei(GL_UNPACK_SKIP_ROWS, rect.y);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, rect.x, rect.y, rect.width,
-                        rect.height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV,
-                        buffer);
-        VERIFY_NO_ERROR;
-      }
-    }
-  } else if (type == PET_POPUP && popup_rect_.width > 0 &&
-             popup_rect_.height > 0) {
-    int skip_pixels = 0, x = popup_rect_.x;
-    int skip_rows = 0, y = popup_rect_.y;
-    int w = width;
-    int h = height;
-
-    // Adjust the popup to fit inside the view.
-    if (x < 0) {
-      skip_pixels = -x;
-      x = 0;
-    }
-    if (y < 0) {
-      skip_rows = -y;
-      y = 0;
-    }
-    if (x + w > view_width_)
-      w -= x + w - view_width_;
-    if (y + h > view_height_)
-      h -= y + h - view_height_;
-
-    // Update the popup rectangle.
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, width);
-    VERIFY_NO_ERROR;
-    glPixelStorei(GL_UNPACK_SKIP_PIXELS, skip_pixels);
-    VERIFY_NO_ERROR;
-    glPixelStorei(GL_UNPACK_SKIP_ROWS, skip_rows);
-    VERIFY_NO_ERROR;
-    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, GL_BGRA,
-                    GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
-    VERIFY_NO_ERROR;
-  }
-
-  if (type == PET_VIEW && !popup_rect_.IsEmpty()) {
+  renderer_.OnPaint(browser, type, dirtyRects, buffer, width, height);
+  if (type == PET_VIEW && !renderer_.popup_rect().IsEmpty()) {
     browser->GetHost()->Invalidate(PET_POPUP);
   }
 
@@ -399,44 +296,12 @@ void FlutterWebviewHandler::OnPopupShow(CefRefPtr<CefBrowser> browser,
                                         bool show) {
   CEF_REQUIRE_UI_THREAD();
 
-  if (!show) {
-    // Clear the popup rectangle.
-    ClearPopupRects();
-  }
+  renderer_.OnPopupShow(browser, show);
 }
 
 void FlutterWebviewHandler::OnPopupSize(CefRefPtr<CefBrowser> browser,
                                         const CefRect& rect) {
   CEF_REQUIRE_UI_THREAD();
 
-  if (rect.width <= 0 || rect.height <= 0)
-    return;
-  original_popup_rect_ = rect;
-  popup_rect_ = GetPopupRectInWebView(original_popup_rect_);
-}
-
-CefRect FlutterWebviewHandler::GetPopupRectInWebView(
-    const CefRect& original_rect) {
-  CefRect rc(original_rect);
-  // if x or y are negative, move them to 0.
-  if (rc.x < 0)
-    rc.x = 0;
-  if (rc.y < 0)
-    rc.y = 0;
-  // if popup goes outside the view, try to reposition origin
-  if (rc.x + rc.width > view_width_)
-    rc.x = view_width_ - rc.width;
-  if (rc.y + rc.height > view_height_)
-    rc.y = view_height_ - rc.height;
-  // if x or y became negative, move them to 0 again.
-  if (rc.x < 0)
-    rc.x = 0;
-  if (rc.y < 0)
-    rc.y = 0;
-  return rc;
-}
-
-void FlutterWebviewHandler::ClearPopupRects() {
-  popup_rect_.Set(0, 0, 0, 0);
-  original_popup_rect_.Set(0, 0, 0, 0);
+  renderer_.OnPopupSize(browser, rect);
 }

@@ -577,7 +577,7 @@ void FlutterWebviewController::Resize(WebviewId webview_id,
   CefRefPtr<CefBrowserHost> host = browser->GetHost();
   FlutterWebviewHandler* handler =
       static_cast<FlutterWebviewHandler*>(host->GetClient().get());
-  handler->SetViewRect(width, height);
+  handler->SetWebviewSize(width, height);
   host->WasResized();
   done_cb(Nullable<WebviewError>());
 }

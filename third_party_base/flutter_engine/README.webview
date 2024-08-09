@@ -1,0 +1,10 @@
+Name: Flutter Engine
+URL: https://github.com/flutter/engine/tree/6ba2af10bb05c88a2731482cedf2cfd11cf5af0b
+Revision: 6ba2af10bb05c88a2731482cedf2cfd11cf5af0b
+Version: 3.0.4
+License: BSD-3-Clause
+License File: LICENSE
+
+Description:
+The variable xkb_to_physical_key_map in key_mapping.cc was copied and translated
+to Dart in order to pass the key input from Dart to the CEF side. 

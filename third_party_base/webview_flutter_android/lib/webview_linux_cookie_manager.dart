@@ -54,7 +54,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import 'linux_webview_plugin.dart';
+import 'package:flutter_linux_webview/src/linux_webview_plugin.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 /// Handles all cookie operations for the current platform.

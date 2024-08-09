@@ -29,8 +29,8 @@ As the report results show, there are stability issues:
 * WebView creation appears to be somewhat unstable.
 * Using Flutter 3.16.3 (latest as of 2023-12-13), the plugin test hangs on all platforms.
 
-We should fix these issues.
-
+We should fix these issues.  
+Update: We have recognized that the cause of these issues is likely accessing the same GL Context from multiple threads.
 
 # Run the example project
 
@@ -537,4 +537,4 @@ However, currently, we are not accepting contributions, and we are unable to res
 
 flutter_linux_webview is licensed under the 3-Clause BSD License, see [LICENSE](./LICENSE).
 
-Portions of flutter_linux_webview include third-party software, each of which is licensed under its respective license. See [ThirdPartyNotices.txt](./ThirdPartyNotices.txt) for details.
+Portions of flutter_linux_webview include third-party software, each of which is licensed under its respective license. See [third_party_base/README.md](./third_party_base/README.md) for more information.

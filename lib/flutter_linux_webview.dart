@@ -28,7 +28,7 @@
 
 library flutter_linux_webview;
 
-export 'src/webview_linux_cookie_manager.dart';
+export 'src/third_party/webview_flutter_android/lib/webview_linux_cookie_manager.dart';
 export 'src/linux_webview_plugin.dart';
 export 'src/webview_linux.dart';
 export 'src/webview_linux_widget.dart';

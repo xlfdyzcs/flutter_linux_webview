@@ -38,13 +38,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
-import 'instance_manager.dart';
+import 'package:flutter_linux_webview/src/third_party/webview_flutter_android/lib/src/instance_manager.dart';
+import 'package:flutter_linux_webview/src/third_party/webview_flutter_android/lib/webview_linux_cookie_manager.dart';
+import 'package:flutter_linux_webview/src/third_party/flutter_engine/shell/platform/linux/native_key_code.dart';
+import 'package:flutter_linux_webview/src/third_party/cef/src/include/internal/cef_types.dart';
+import 'package:flutter_linux_webview/src/third_party/cef/src/tests/cefclient/browser/windows_key_code.dart';
 import 'linux_webview_plugin.dart';
 import 'logging.dart';
-import 'webview_linux_cookie_manager.dart';
-import 'cef_types.dart';
-import 'native_key_code.dart';
-import 'windows_key_code.dart';
 
 class WebViewLinuxWidget extends StatefulWidget {
   const WebViewLinuxWidget({
@@ -733,14 +733,12 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
 
   final WebViewPlatformCallbacksHandler callbacksHandler;
   final JavascriptChannelRegistry javascriptChannelRegistry;
-  int? _webviewId;
 
   /// create a browser.
   Future<int?> _create(String? initialUrl, Color? backgroundColor,
       int initialWidth, int initialHeight) async {
     final int? webviewId = instanceManager.tryAddInstance(this);
     if (webviewId != null) {
-      _webviewId = webviewId;
       log.fine('createBrowser called. webviewId: $webviewId');
       final int? textureId = await (await LinuxWebViewPlugin.channel)
           .invokeMethod('createBrowser', <String, dynamic>{

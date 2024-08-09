@@ -26,39 +26,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// This file is based on https://bitbucket.org/chromiumembedded/cef/src/4664/tests/cefclient/browser/osr_renderer.h
-// for off-screen rendering.
-
-// Copyright (c) 2013 The Chromium Embedded Framework Authors. All rights
-// reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-//    * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above
-// copyright notice, this list of conditions and the following disclaimer
-// in the documentation and/or other materials provided with the
-// distribution.
-//    * Neither the name of Google Inc. nor the name Chromium Embedded
-// Framework nor the names of its contributors may be used to endorse
-// or promote products derived from this software without specific prior
-// written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 #ifndef LINUX_FLUTTER_WEBVIEW_HANDLER_H_
 #define LINUX_FLUTTER_WEBVIEW_HANDLER_H_
 
@@ -68,6 +35,7 @@
 #include <set>
 
 #include "flutter_linux_webview/flutter_webview_types.h"
+#include "third_party/cef/src/tests/cefclient/browser/flutter_webview_osr_renderer.h"
 #include "include/cef_client.h"
 
 class FlutterWebviewHandler : public CefClient,
@@ -156,7 +124,7 @@ class FlutterWebviewHandler : public CefClient,
   void CloseBrowser(const std::function<void()>& close_browser_cb);
 
   // Set the OSR resolution
-  void SetViewRect(int width, int height);
+  void SetWebviewSize(int width, int height);
 
  private:
   enum class BrowserState {
@@ -168,9 +136,6 @@ class FlutterWebviewHandler : public CefClient,
     kClosing,
     kClosed
   };
-
-  void ClearPopupRects();
-  CefRect GetPopupRectInWebView(const CefRect& original_rect);
 
   std::function<void(WebviewId webview_id)> on_paint_begin_;
   std::function<void(WebviewId webview_id)> on_paint_end_;
@@ -192,11 +157,9 @@ class FlutterWebviewHandler : public CefClient,
   WebviewId webview_id_;
   BrowserState browser_state_;
   CefRefPtr<CefBrowser> browser_;
-  GLuint native_texture_id_;
-  int view_width_;
-  int view_height_;
-  CefRect popup_rect_;
-  CefRect original_popup_rect_;
+  FlutterWebviewOsrRenderer renderer_;
+  int webview_width_;
+  int webview_height_;
 
   // Include the default reference counting implementation.
   IMPLEMENT_REFCOUNTING(FlutterWebviewHandler);

@@ -1,0 +1,9 @@
+Name: webview_flutter
+URL: https://github.com/flutter/plugins/tree/webview_flutter-v3.0.4/packages/webview_flutter/webview_flutter
+Version: 3.0.4
+License: BSD-3-Clause
+License File: LICENSE
+
+Description:
+The example app, assets, and integration_test are copied. These are for testing
+purposes and to demonstrate compatibility with mobile webview_flutter.
