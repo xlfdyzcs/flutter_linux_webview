@@ -639,9 +639,15 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
 
     switch (call.method) {
       case 'javascriptChannelMessage':
-        // javascriptChannels have not yet been implemented.
-        // TODO(Ino): implement javascriptChannels
-        throw UnimplementedError('javascriptChannelMessage is not implemented');
+        final WebViewLinuxPlatformController controller =
+            _getControllerByWebviewId(call.arguments['webviewId'] as int);
+        final String channelName = call.arguments['channel'] as String;
+        final String message = call.arguments['message'] as String;
+        controller.javascriptChannelRegistry.onJavascriptChannelMessage(
+          channelName,
+          message,
+        );
+        return null;
       case 'navigationRequest':
         // TODO(Ino): implement navigationDelegate
         // WebViewLinuxPlatformController controller = _getController(call);
@@ -1229,28 +1235,113 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
     return jsResult;
   }
 
-  /// Not implemented on Linux. Will be supported in the future.
+  /// Adds JavaScript channels to the set of enabled channels.
   ///
+  /// For each value in this set, we'll inject a JavaScript object named
+  /// value into window.flutter_inappwebview, and hook its postMessage function.
   /// See [WebViewPlatformController.addJavascriptChannels] for the original
   /// description.
-  ///
-  /// TODO(Ino): implement [addJavascriptChannels]
   @override
   Future<void> addJavascriptChannels(Set<String> javascriptChannelNames) async {
-    throw UnimplementedError(
-        'WebView addJavascriptChannels is not implemented on the current platform');
+    final int? webviewId = instanceManager.getInstanceId(this);
+    if (webviewId == null) {
+      throw 'Failed to get the webview instance';
+    }
+    
+    // First, ensure the flutter_webview_linux object exists for postMessage
+    await _ensureFlutterWebViewLinuxObject(webviewId);
+    
+    // Then add each channel
+    for (final String channelName in javascriptChannelNames) {
+      await _injectJavascriptChannelScript(webviewId, channelName);
+    }
+  }
+  
+  /// Ensures the flutter_webview_linux object exists with postMessage function
+  Future<void> _ensureFlutterWebViewLinuxObject(int webviewId) async {
+    final String script = '''
+      (function() {
+        if (!window.flutter_webview_linux) {
+          window.flutter_webview_linux = {
+            postMessage: function(channel, message) {
+              // Use console.log for debugging
+              console.log('Channel message: ' + channel + ', ' + message);
+              // Call a special function that will be intercepted by the native code
+              // This approach works with CEF (Chromium Embedded Framework)
+              window.__flutter_webview_linux_post_message__(channel, message, $webviewId);
+            }
+          };
+        }
+      })();
+    ''';
+    
+    await runJavascript(script);
+    
+    // Register a custom JavaScript function that will be intercepted by the native code
+    // This is a common approach for CEF-based WebViews
+    final String registerFunction = '''
+      (function() {
+        // Define the function that will be intercepted by native code
+        window.__flutter_webview_linux_post_message__ = function(channel, message, webviewId) {
+          console.log('Sending message to channel: ' + channel);
+          // This function will be intercepted by the native code
+          // The implementation is in the native part of the plugin
+        };
+      })();
+    ''';
+    
+    await runJavascript(registerFunction);
+  }
+  
+  /// Injects JavaScript code to set up a channel with the given name.
+  Future<void> _injectJavascriptChannelScript(int webviewId, String channelName) async {
+    // Create the JavaScript to inject
+    final String script = '''
+      (function() {
+        if (!window.flutter_inappwebview) {
+          window.flutter_inappwebview = {};
+        }
+        if (!window.flutter_inappwebview.$channelName) {
+          window.flutter_inappwebview.$channelName = {
+            postMessage: function(message) {
+              window.flutter_webview_linux.postMessage('$channelName', message);
+            }
+          };
+        }
+      })();
+    ''';
+    
+    await runJavascript(script);
   }
 
-  /// Not implemented on Linux. Will be supported in the future.
+  /// Removes JavaScript channels from the set of enabled channels.
   ///
+  /// This disables channels that were previously enabled by [addJavascriptChannels].
   /// See [WebViewPlatformController.removeJavascriptChannels] for the original
   /// description.
-  ///
-  /// TODO(Ino): implement [removeJavascriptChannels]
   @override
-  Future<void> removeJavascriptChannels(Set<String> javascriptChannelNames) {
-    throw UnimplementedError(
-        'WebView removeJavascriptChannels is not implemented on the current platform');
+  Future<void> removeJavascriptChannels(Set<String> javascriptChannelNames) async {
+    final int? webviewId = instanceManager.getInstanceId(this);
+    if (webviewId == null) {
+      throw 'Failed to get the webview instance';
+    }
+    
+    for (final String channelName in javascriptChannelNames) {
+      await _removeJavascriptChannel(webviewId, channelName);
+    }
+  }
+  
+  /// Removes a JavaScript channel by setting its object to null.
+  Future<void> _removeJavascriptChannel(int webviewId, String channelName) async {
+    final String script = '''
+      (function() {
+        if (window.flutter_inappwebview && window.flutter_inappwebview.$channelName) {
+          delete window.flutter_inappwebview.$channelName;
+        }
+      })();
+    ''';
+    
+    await runJavascript(script);
   }
 
   @override
