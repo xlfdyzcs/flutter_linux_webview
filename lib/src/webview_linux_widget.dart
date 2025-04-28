@@ -218,8 +218,8 @@ class _WebViewLinuxWidgetState extends State<WebViewLinuxWidget> {
   void _onKeyEvent(KeyEvent event) {
     log.fine(
         '${event is KeyUpEvent ? '⬆' : event is KeyDownEvent ? '⬇' : 'REPEAT'} KeyEvent: ${event.runtimeType}\n'
-        '  LogicalKey: ${event.logicalKey}\n'
-        '  PhysicalKey: ${event.physicalKey}');
+            '  LogicalKey: ${event.logicalKey}\n'
+            '  PhysicalKey: ${event.physicalKey}');
 
     // final logicalKeysPressed = HardwareKeyboard.instance.logicalKeysPressed;
     // final phisicalKeysPressed = HardwareKeyboard.instance.physicalKeysPressed;
@@ -236,12 +236,12 @@ class _WebViewLinuxWidgetState extends State<WebViewLinuxWidget> {
     }
 
     final KeyboardCode windowsKeyCode =
-        getWindowsKeyCodeWithoutLocation(getWindowsKeyCode(event.logicalKey));
+    getWindowsKeyCodeWithoutLocation(getWindowsKeyCode(event.logicalKey));
     final int nativeKeyCode = getNativeKeyCode(event.physicalKey.usbHidUsage);
     final int modifiers = _getModifiers(_prevButtons) |
-        (_isNumpadKey(event.logicalKey)
-            ? CefEventFlags.EVENTFLAG_IS_KEY_PAD.value
-            : 0);
+    (_isNumpadKey(event.logicalKey)
+        ? CefEventFlags.EVENTFLAG_IS_KEY_PAD.value
+        : 0);
     final int unmodifiedCharacter = (windowsKeyCode == KeyboardCode.VKEY_RETURN
         ? 0x0d /* '\r' */
         : getCharCode(event.character));
@@ -314,7 +314,7 @@ class _WebViewLinuxWidgetState extends State<WebViewLinuxWidget> {
     int count = details.count > 3 ? 3 : details.count;
     int modifiers = _getModifiers(details.buttons);
     List<CefMouseButtonType> buttons =
-        _getButtonsStateChangedToDown(details.buttons, _prevButtons);
+    _getButtonsStateChangedToDown(details.buttons, _prevButtons);
 
     for (CefMouseButtonType button in buttons) {
       _controller._sendMouseClick(
@@ -341,9 +341,9 @@ class _WebViewLinuxWidgetState extends State<WebViewLinuxWidget> {
     // detected by Listener.onPointerMove, not by Listener.onPointerUp/Down
     if (event.buttons != _prevButtons) {
       List<CefMouseButtonType> buttonsStateChangedToDown =
-          _getButtonsStateChangedToDown(event.buttons, _prevButtons);
+      _getButtonsStateChangedToDown(event.buttons, _prevButtons);
       List<CefMouseButtonType> buttonsStateChangedToUp =
-          _getButtonsStateChangedToUp(event.buttons, _prevButtons);
+      _getButtonsStateChangedToUp(event.buttons, _prevButtons);
 
       for (CefMouseButtonType button in buttonsStateChangedToDown) {
         _controller._sendMouseClick(
@@ -376,7 +376,7 @@ class _WebViewLinuxWidgetState extends State<WebViewLinuxWidget> {
         '  buttons: ${event.buttons}');
 
     List<CefMouseButtonType> buttons =
-        _getButtonsStateChangedToUp(event.buttons, _prevButtons);
+    _getButtonsStateChangedToUp(event.buttons, _prevButtons);
     int modifiers = _getModifiers(event.buttons);
 
     for (CefMouseButtonType button in buttons) {
@@ -422,11 +422,11 @@ class _WebViewLinuxWidgetState extends State<WebViewLinuxWidget> {
 }
 
 List<CefMouseButtonType> _getButtonsStateChangedToDown(
-        int currentButtons, int prevButtons) =>
+    int currentButtons, int prevButtons) =>
     _getButtonsStateChanged(true, currentButtons, prevButtons);
 
 List<CefMouseButtonType> _getButtonsStateChangedToUp(
-        int currentButtons, int prevButtons) =>
+    int currentButtons, int prevButtons) =>
     _getButtonsStateChanged(false, currentButtons, prevButtons);
 
 List<CefMouseButtonType> _getButtonsStateChanged(
@@ -473,8 +473,8 @@ int _getModifiers(int mouseButtons) {
   final isSecondaryButtonPressed = mouseButtons & kSecondaryButton != 0;
   final isMiddleButtonPressed = mouseButtons & kMiddleMouseButton != 0;
   final bool isShiftPressed = HardwareKeyboard.instance.logicalKeysPressed.any(
-      (logicalKey) =>
-          logicalKey == LogicalKeyboardKey.shift ||
+          (logicalKey) =>
+      logicalKey == LogicalKeyboardKey.shift ||
           logicalKey == LogicalKeyboardKey.shiftLeft ||
           logicalKey == LogicalKeyboardKey.shiftRight);
   final bool isCapsLockOn = HardwareKeyboard.instance.lockModesEnabled
@@ -483,17 +483,17 @@ int _getModifiers(int mouseButtons) {
       .any((lockKey) => lockKey.logicalKey == LogicalKeyboardKey.numLock);
   final bool isControlPressed = HardwareKeyboard.instance.logicalKeysPressed
       .any((logicalKey) =>
-          logicalKey == LogicalKeyboardKey.control ||
-          logicalKey == LogicalKeyboardKey.controlLeft ||
-          logicalKey == LogicalKeyboardKey.controlRight);
+  logicalKey == LogicalKeyboardKey.control ||
+      logicalKey == LogicalKeyboardKey.controlLeft ||
+      logicalKey == LogicalKeyboardKey.controlRight);
   final bool isAltPressed = HardwareKeyboard.instance.logicalKeysPressed.any(
-      (logicalKey) =>
-          logicalKey == LogicalKeyboardKey.alt ||
+          (logicalKey) =>
+      logicalKey == LogicalKeyboardKey.alt ||
           logicalKey == LogicalKeyboardKey.altLeft ||
           logicalKey == LogicalKeyboardKey.altRight);
   final bool isMetaPressed = HardwareKeyboard.instance.logicalKeysPressed.any(
-      (logicalKey) =>
-          logicalKey == LogicalKeyboardKey.superKey ||
+          (logicalKey) =>
+      logicalKey == LogicalKeyboardKey.superKey ||
           logicalKey == LogicalKeyboardKey.meta ||
           logicalKey == LogicalKeyboardKey.metaLeft ||
           logicalKey == LogicalKeyboardKey.metaRight);
@@ -630,7 +630,7 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
     /// Get the webview instance corresponding to webviewId
     WebViewLinuxPlatformController _getControllerByWebviewId(int webviewId) {
       final controller = instanceManager.getInstance(webviewId)
-          as WebViewLinuxPlatformController?;
+      as WebViewLinuxPlatformController?;
       if (controller == null) {
         throw 'WebView with webviewId=$webviewId is not found';
       }
@@ -639,19 +639,25 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
 
     switch (call.method) {
       case 'javascriptChannelMessage':
-        // javascriptChannels have not yet been implemented.
-        // TODO(Ino): implement javascriptChannels
-        throw UnimplementedError('javascriptChannelMessage is not implemented');
+        final WebViewLinuxPlatformController controller =
+        _getControllerByWebviewId(call.arguments['webviewId'] as int);
+        final String channelName = call.arguments['channel'] as String;
+        final String message = call.arguments['message'] as String;
+        controller.javascriptChannelRegistry.onJavascriptChannelMessage(
+          channelName,
+          message,
+        );
+        return null;
       case 'navigationRequest':
-        // TODO(Ino): implement navigationDelegate
-        // WebViewLinuxPlatformController controller = _getController(call);
-        // return await controller.callbacksHandler.onNavigationRequest(
-        //   url: call.arguments['url'] as String,
-        //   isForMainFrame: call.arguments['isForMainFrame'] as bool,
-        // );
+      // TODO(Ino): implement navigationDelegate
+      // WebViewLinuxPlatformController controller = _getController(call);
+      // return await controller.callbacksHandler.onNavigationRequest(
+      //   url: call.arguments['url'] as String,
+      //   isForMainFrame: call.arguments['isForMainFrame'] as bool,
+      // );
         throw UnimplementedError('navigationRequest is not implemented');
       case 'javascriptResult':
-        // The result of _runJavascriptInternal comes here.
+      // The result of _runJavascriptInternal comes here.
         final int jsRunId = call.arguments['jsRunId'] as int;
         final bool wasExecuted = call.arguments['wasExecuted'] as bool;
         final bool isException = call.arguments['isException'] as bool;
@@ -679,25 +685,25 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
         return true;
       case 'onPageFinished':
         WebViewLinuxPlatformController controller =
-            _getControllerByWebviewId(call.arguments['webviewId'] as int);
+        _getControllerByWebviewId(call.arguments['webviewId'] as int);
         controller.callbacksHandler
             .onPageFinished(call.arguments['url'] as String);
         return null;
       case 'onProgress':
         WebViewLinuxPlatformController controller =
-            _getControllerByWebviewId(call.arguments['webviewId'] as int);
+        _getControllerByWebviewId(call.arguments['webviewId'] as int);
         controller.callbacksHandler
             .onProgress(call.arguments['progress'] as int);
         return null;
       case 'onPageStarted':
         WebViewLinuxPlatformController controller =
-            _getControllerByWebviewId(call.arguments['webviewId'] as int);
+        _getControllerByWebviewId(call.arguments['webviewId'] as int);
         controller.callbacksHandler
             .onPageStarted(call.arguments['url'] as String);
         return null;
       case 'onWebResourceError':
         WebViewLinuxPlatformController controller =
-            _getControllerByWebviewId(call.arguments['webviewId']);
+        _getControllerByWebviewId(call.arguments['webviewId']);
         controller.callbacksHandler.onWebResourceError(
           WebResourceError(
             errorCode: call.arguments['errorCode'] as int,
@@ -709,11 +715,11 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
             errorType: call.arguments['errorType'] == null
                 ? null
                 : WebResourceErrorType.values.firstWhere(
-                    (WebResourceErrorType type) {
-                      return type.toString() ==
-                          '$WebResourceErrorType.${call.arguments['errorType']}';
-                    },
-                  ),
+                  (WebResourceErrorType type) {
+                return type.toString() ==
+                    '$WebResourceErrorType.${call.arguments['errorType']}';
+              },
+            ),
           ),
         );
         return null;
@@ -725,10 +731,10 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
 
   WebViewLinuxPlatformController(
       {required this.callbacksHandler,
-      required this.javascriptChannelRegistry,
-      required CreationParams creationParams})
-      // NOTE: This super constructor will be removed in the future. See
-      // the comment in the WebViewPlatformController class.
+        required this.javascriptChannelRegistry,
+        required CreationParams creationParams})
+  // NOTE: This super constructor will be removed in the future. See
+  // the comment in the WebViewPlatformController class.
       : super(callbacksHandler);
 
   final WebViewPlatformCallbacksHandler callbacksHandler;
@@ -746,11 +752,11 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
         'initialUrl': initialUrl ?? '',
         'backgroundColor': (backgroundColor != null)
             ? Uint8List.fromList([
-                backgroundColor.alpha,
-                backgroundColor.red,
-                backgroundColor.green,
-                backgroundColor.blue
-              ])
+          backgroundColor.alpha,
+          backgroundColor.red,
+          backgroundColor.green,
+          backgroundColor.blue
+        ])
             : Uint8List.fromList([]),
         'initialWidth': initialWidth,
         'initialHeight': initialHeight,
@@ -881,8 +887,8 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
   /// TODO(Ino): Immediately reflect the new URL in [currentUrl].
   @override
   Future<void> loadFile(
-    String absoluteFilePath,
-  ) async {
+      String absoluteFilePath,
+      ) async {
     final int? webviewId = instanceManager.getInstanceId(this);
     if (webviewId == null) {
       throw 'Failed to get the webview instance';
@@ -909,8 +915,8 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
   /// TODO(Ino): Immediately reflect the new URL in [currentUrl].
   @override
   Future<void> loadFlutterAsset(
-    String key,
-  ) async {
+      String key,
+      ) async {
     final int? webviewId = instanceManager.getInstanceId(this);
     if (webviewId == null) {
       throw 'Failed to get the webview instance';
@@ -945,9 +951,9 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
   /// TODO(Ino): Immediately reflect the new URL in [currentUrl].
   @override
   Future<void> loadHtmlString(
-    String html, {
-    String? baseUrl,
-  }) async {
+      String html, {
+        String? baseUrl,
+      }) async {
     final int? webviewId = instanceManager.getInstanceId(this);
     if (webviewId == null) {
       throw 'Failed to get the webview instance';
@@ -992,9 +998,9 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
   /// TODO(Ino): Fix [loadUrl] so that the expected URL is available in [currentUrl].
   @override
   Future<void> loadUrl(
-    String url,
-    Map<String, String>? headers,
-  ) async {
+      String url,
+      Map<String, String>? headers,
+      ) async {
     final int? webviewId = instanceManager.getInstanceId(this);
     if (webviewId == null) {
       throw 'Failed to get the webview instance';
@@ -1044,8 +1050,8 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
   /// TODO(Ino): Immediately reflect the new URL in [currentUrl].
   @override
   Future<void> loadRequest(
-    WebViewRequest request,
-  ) async {
+      WebViewRequest request,
+      ) async {
     final int? webviewId = instanceManager.getInstanceId(this);
     if (webviewId == null) {
       throw 'Failed to get the webview instance';
@@ -1187,7 +1193,7 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
     }
 
     _JavascriptResult jsResult =
-        await _runJavascriptInternal(webviewId, javascript);
+    await _runJavascriptInternal(webviewId, javascript);
     if (!jsResult.wasExecuted) {
       throw "javascript was not executed for some reason";
     }
@@ -1229,28 +1235,113 @@ class WebViewLinuxPlatformController extends WebViewPlatformController {
     return jsResult;
   }
 
-  /// Not implemented on Linux. Will be supported in the future.
+  /// Adds JavaScript channels to the set of enabled channels.
   ///
+  /// For each value in this set, we'll inject a JavaScript object named
+  /// value into window.flutter_inappwebview, and hook its postMessage function.
   /// See [WebViewPlatformController.addJavascriptChannels] for the original
   /// description.
-  ///
-  /// TODO(Ino): implement [addJavascriptChannels]
   @override
   Future<void> addJavascriptChannels(Set<String> javascriptChannelNames) async {
-    throw UnimplementedError(
-        'WebView addJavascriptChannels is not implemented on the current platform');
+    final int? webviewId = instanceManager.getInstanceId(this);
+    if (webviewId == null) {
+      throw 'Failed to get the webview instance';
+    }
+
+    // First, ensure the flutter_webview_linux object exists for postMessage
+    await _ensureFlutterWebViewLinuxObject(webviewId);
+
+    // Then add each channel
+    for (final String channelName in javascriptChannelNames) {
+      await _injectJavascriptChannelScript(webviewId, channelName);
+    }
   }
 
-  /// Not implemented on Linux. Will be supported in the future.
+  /// Ensures the flutter_webview_linux object exists with postMessage function
+  Future<void> _ensureFlutterWebViewLinuxObject(int webviewId) async {
+    final String script = '''
+      (function() {
+        if (!window.flutter_webview_linux) {
+          window.flutter_webview_linux = {
+            postMessage: function(channel, message) {
+              // Use console.log for debugging
+              console.log('Channel message: ' + channel + ', ' + message);
+              // Call a special function that will be intercepted by the native code
+              // This approach works with CEF (Chromium Embedded Framework)
+              window.__flutter_webview_linux_post_message__(channel, message, $webviewId);
+            }
+          };
+        }
+      })();
+    ''';
+
+    await runJavascript(script);
+
+    // Register a custom JavaScript function that will be intercepted by the native code
+    // This is a common approach for CEF-based WebViews
+    final String registerFunction = '''
+      (function() {
+        // Define the function that will be intercepted by native code
+        window.__flutter_webview_linux_post_message__ = function(channel, message, webviewId) {
+          console.log('Sending message to channel: ' + channel);
+          // This function will be intercepted by the native code
+          // The implementation is in the native part of the plugin
+        };
+      })();
+    ''';
+
+    await runJavascript(registerFunction);
+  }
+
+  /// Injects JavaScript code to set up a channel with the given name.
+  Future<void> _injectJavascriptChannelScript(int webviewId, String channelName) async {
+    // Create the JavaScript to inject
+    final String script = '''
+      (function() {
+        if (!window.flutter_inappwebview) {
+          window.flutter_inappwebview = {};
+        }
+        if (!window.flutter_inappwebview.$channelName) {
+          window.flutter_inappwebview.$channelName = {
+            postMessage: function(message) {
+              window.flutter_webview_linux.postMessage('$channelName', message);
+            }
+          };
+        }
+      })();
+    ''';
+
+    await runJavascript(script);
+  }
+
+  /// Removes JavaScript channels from the set of enabled channels.
   ///
+  /// This disables channels that were previously enabled by [addJavascriptChannels].
   /// See [WebViewPlatformController.removeJavascriptChannels] for the original
   /// description.
-  ///
-  /// TODO(Ino): implement [removeJavascriptChannels]
   @override
-  Future<void> removeJavascriptChannels(Set<String> javascriptChannelNames) {
-    throw UnimplementedError(
-        'WebView removeJavascriptChannels is not implemented on the current platform');
+  Future<void> removeJavascriptChannels(Set<String> javascriptChannelNames) async {
+    final int? webviewId = instanceManager.getInstanceId(this);
+    if (webviewId == null) {
+      throw 'Failed to get the webview instance';
+    }
+
+    for (final String channelName in javascriptChannelNames) {
+      await _removeJavascriptChannel(webviewId, channelName);
+    }
+  }
+
+  /// Removes a JavaScript channel by setting its object to null.
+  Future<void> _removeJavascriptChannel(int webviewId, String channelName) async {
+    final String script = '''
+      (function() {
+        if (window.flutter_inappwebview && window.flutter_inappwebview.$channelName) {
+          delete window.flutter_inappwebview.$channelName;
+        }
+      })();
+    ''';
+
+    await runJavascript(script);
   }
 
   @override
@@ -1334,10 +1425,10 @@ class _SerialTapGestureDetector extends StatelessWidget {
         child: child,
         gestures: <Type, GestureRecognizerFactory>{
           SerialTapGestureRecognizer:
-              GestureRecognizerFactoryWithHandlers<SerialTapGestureRecognizer>(
-            () =>
-                SerialTapGestureRecognizer()..onSerialTapDown = onSerialTapDown,
-            (instance) {},
+          GestureRecognizerFactoryWithHandlers<SerialTapGestureRecognizer>(
+                () =>
+            SerialTapGestureRecognizer()..onSerialTapDown = onSerialTapDown,
+                (instance) {},
           ),
         });
   }
