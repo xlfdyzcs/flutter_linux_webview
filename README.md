@@ -7,8 +7,8 @@ A Linux Desktop implementation for the [webview_flutter](https://pub.dev/package
 This plugin package provides the Linux implementation for [webview_flutter](https://pub.dev/packages/webview_flutter/versions/3.0.4) (v3.0.4) using CEF.
 
 Depending on the architecture, the following CEF binary distribution provided at https://cef-builds.spotifycdn.com/index.html is downloaded in the source directory of the plugin at the first build time:
-- for x86_64: [cef_binary_136.1.6+g1ac1b14+chromium-136.0.7103.114_linux64_minimal](https://cef-builds.spotifycdn.com/cef_binary_136.1.6%2Bg1ac1b14%2Bchromium-136.0.7103.114_linux64_minimal.tar.bz2)
-- for arm64: [cef_binary_136.1.6+g1ac1b14+chromium-136.0.7103.114_linuxarm64_minimal](https://cef-builds.spotifycdn.com/cef_binary_136.1.6%2Bg1ac1b14%2Bchromium-136.0.7103.114_linuxarm64_minimal.tar.bz2)
+- for x86_64: [cef_binary_130.1.2+g48f3ef6+chromium-130.0.6723.44_linux64_minimal](https://cef-builds.spotifycdn.com/cef_binary_130.1.2%2Bg48f3ef6%2Bchromium-130.0.6723.44_linux64_minimal.tar.bz2)
+- for arm64: [cef_binary_130.1.2+g48f3ef6+chromium-130.0.6723.44_linuxarm64_minimal](https://cef-builds.spotifycdn.com/cef_binary_130.1.2%2Bg48f3ef6%2Bchromium-130.0.6723.44_linuxarm64_minimal.tar.bz2)
 
 <!-- note: pub.dev and GitBucket does not resolve relative paths!! GitHub does. -->
 <table>

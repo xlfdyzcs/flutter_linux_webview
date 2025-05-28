@@ -109,7 +109,7 @@ First of all, this directory (`linux/`) is added using `add_subdirectory()` duri
 1. Verifies that the string `include(flutter/ephemeral/.plugin_symlinks/flutter_linux_webview/linux/cmake/link_to_cef_library.cmake)` is included in the `CMakeLists.txt` of the app project. If it is not included, adds the string to the end of that file and shows a message to prompt the user to rebuild the app.
   - `linux/cmake/link_to_cef_library.cmake` contains a `target_link_libraries()` command for linking to `libcef.so`.
   - This setting is necessary because the plugin will hang in the `CefInitialize()` function if the Flutter app executable is not linked to `libcef.so`.
-2. Downloads and extracts the CEF binary distribution (cef_binary_136.1.6+g1ac1b14+chromium-136.0.7103.114_linux64_minimal) in the `linux/` directory.
+2. Downloads and extracts the CEF binary distribution (cef_binary_130.1.2+g48f3ef6+chromium-130.0.6723.44_linux64_minimal) in the `linux/` directory.
 3. Modifies the CEF binary distribution to prepare for building the sub-process executable.
   - Applies `linux/subprocess/cef_distrib_patch/build_flutter_webview_subprocess.patch` to `linux/<CEF binary distrib dir>/CMakeLists.txt` to enable building for the `linux/subprocess/src/`.
 4. The plugin (`libflutter_linux_webview.so` and `flutter_webview_subprocess`) is built under the `<Flutter app build dir>/plugins/flutter_linux_webview/` directory.

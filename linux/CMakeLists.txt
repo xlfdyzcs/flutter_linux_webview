@@ -36,6 +36,11 @@ cmake_minimum_required(VERSION 3.10)
 set(PROJECT_NAME "flutter_linux_webview")
 project(${PROJECT_NAME} LANGUAGES CXX)
 
+# Set C++17 standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 # This value is used when generating builds using this plugin, so it must
 # not be changed.
 set(PLUGIN_NAME "flutter_linux_webview_plugin")
@@ -149,12 +154,11 @@ endif()
 if(${USE_CEF_STANDARD_DISTRIB})
   # USE_CEF_STANDARD_DISTRIB ON
   set(WEBVIEW_CEF_DISTRIB_NAME
-    "cef_binary_136.1.6+g1ac1b14+chromium-136.0.7103.114_linux64")
+    "cef_binary_130.1.2+g48f3ef6+chromium-130.0.6723.44_linux64")
   set(WEBVIEW_CEF_DISTRIB_URL
-    "https://cef-builds.spotifycdn.com/cef_binary_136.1.6%2Bg1ac1b14%2Bchromium-136.0.7103.114_linux64.tar.bz2")
-  # TODO: Update with correct SHA1 hash after first build attempt
-  # The build system will provide the correct hash if this is incorrect
-  set(WEBVIEW_CEF_DISTRIB_HASH_SHA1 "0000000000000000000000000000000000000000")
+    "https://cef-builds.spotifycdn.com/cef_binary_130.1.2%2Bg48f3ef6%2Bchromium-130.0.6723.44_linux64.tar.bz2")
+  # SHA1 hash for CEF 130.1.2+g48f3ef6+chromium-130.0.6723.44 Linux64 standard distribution
+  set(WEBVIEW_CEF_DISTRIB_HASH_SHA1 "9efa50571dc393cf41a34979667b280b20f269ee")
 
   if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     set(WEBVIEW_CEF_BUILD_TYPE "Debug")
@@ -166,22 +170,22 @@ else()
   if("${CMAKE_HOST_SYSTEM_PROCESSOR}" STREQUAL "aarch64")
     # linux arm64
     set(WEBVIEW_CEF_DISTRIB_NAME
-      "cef_binary_136.1.6+g1ac1b14+chromium-136.0.7103.114_linuxarm64_minimal")
+      "cef_binary_130.1.2+g48f3ef6+chromium-130.0.6723.44_linuxarm64_minimal")
     set(WEBVIEW_CEF_DISTRIB_URL
-      "https://cef-builds.spotifycdn.com/cef_binary_136.1.6%2Bg1ac1b14%2Bchromium-136.0.7103.114_linuxarm64_minimal.tar.bz2")
-    # TODO: Update with correct SHA1 hash after first build attempt
-     set(WEBVIEW_CEF_DISTRIB_HASH_SHA1 "0000000000000000000000000000000000000000")
+      "https://cef-builds.spotifycdn.com/cef_binary_130.1.2%2Bg48f3ef6%2Bchromium-130.0.6723.44_linuxarm64_minimal.tar.bz2")
+    # SHA1 hash for CEF 130.1.2+g48f3ef6+chromium-130.0.6723.44 Linux ARM64 minimal distribution
+    set(WEBVIEW_CEF_DISTRIB_HASH_SHA1 "a74532f1c1ccc70b6c56343bcb5eb101f730879e")
     set(WEBVIEW_CEF_BUILD_TYPE "Release")
     # The CEF binary distrib requires the PROJECT_ARCH variable
     set(PROJECT_ARCH "arm64")
   else()
     # linux x86_64
     set(WEBVIEW_CEF_DISTRIB_NAME
-      "cef_binary_136.1.6+g1ac1b14+chromium-136.0.7103.114_linux64_minimal")
+      "cef_binary_130.1.2+g48f3ef6+chromium-130.0.6723.44_linux64_minimal")
     set(WEBVIEW_CEF_DISTRIB_URL
-      "https://cef-builds.spotifycdn.com/cef_binary_136.1.6%2Bg1ac1b14%2Bchromium-136.0.7103.114_linux64_minimal.tar.bz2")
-    # TODO: Update with correct SHA1 hash after first build attempt
-     set(WEBVIEW_CEF_DISTRIB_HASH_SHA1 "0000000000000000000000000000000000000000")
+      "https://cef-builds.spotifycdn.com/cef_binary_130.1.2%2Bg48f3ef6%2Bchromium-130.0.6723.44_linux64_minimal.tar.bz2")
+    # SHA1 hash for CEF 130.1.2+g48f3ef6+chromium-130.0.6723.44 Linux64 minimal distribution
+    set(WEBVIEW_CEF_DISTRIB_HASH_SHA1 "f2e8422783fe2257006f5da9074780b38539a0df")
     set(WEBVIEW_CEF_BUILD_TYPE "Release")
   endif()
 endif()
