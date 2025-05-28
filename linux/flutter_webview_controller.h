@@ -38,10 +38,13 @@
 #include <thread>
 #include <unordered_map>
 #include <vector>
+#include <cstdint>
+#include <cuchar>
 
 #include "flutter_linux_webview/flutter_webview_types.h"
 #include "flutter_webview_handler.h"
 #include "include/cef_render_handler.h"
+#include "include/internal/cef_types.h"
 
 // Provides the API to control a WebView. Unless otherwise indicated in the
 // comments, the methods of this class must be called on the CEF UI and the
@@ -119,8 +122,8 @@ class FlutterWebviewController {
                       int windowsKeyCode,
                       int nativeKeyCode,
                       bool isSystemKey,
-                      char16 character,
-                      char16 unmodifiedCharacter,
+                      char16_t character,
+                      char16_t unmodifiedCharacter,
                       const DoneCBVoid& done_cb);
 
   // Sets the rendering resolution of the browser with |webview_id| to |width|

@@ -34,6 +34,8 @@
 
 #include <algorithm>
 #include <iostream>
+#include <cstdint>
+#include <cuchar>
 
 #include "flutter_linux_webview/flutter_webview_types.h"
 #include "flutter_webview_controller.h"
@@ -143,11 +145,11 @@ bool get_arg_int64_to_uint32(FlValue* map,
 }
 
 // Obtains an FL_VALUE_TYPE_INT value from the |map| by the |key| and outputs it
-// as a (CEF-defined) char16 value. The FL_VALUE_TYPE_INT value must be within
-// the char16 range. Returns false and outputs |out_error| in case of error.
+// as a (CEF-defined) char16_t value. The FL_VALUE_TYPE_INT value must be within
+// the char16_t range. Returns false and outputs |out_error| in case of error.
 bool get_arg_int64_to_char16(FlValue* map,
                              const char* key,
-                             char16* out,
+                             char16_t* out,
                              FlMethodResponse** out_error) {
   int64_t buf;
   if (!get_arg_int64(map, key, &buf, out_error)) {
@@ -162,7 +164,7 @@ bool get_arg_int64_to_char16(FlValue* map,
         nullptr));
     return false;
   }
-  *out = static_cast<char16>(buf);
+  *out = static_cast<char16_t>(buf);
   return true;
 }
 
@@ -595,8 +597,8 @@ static FlMethodResponse* plugin_on_send_key_async(
   int windowsKeyCode;
   int nativeKeyCode;
   bool isSystemKey;
-  char16 character;
-  char16 unmodifiedCharacter;
+  char16_t character;
+  char16_t unmodifiedCharacter;
 
   if (!get_arg_int64(args, "webviewId", &webviewId, &error_response)) {
     return error_response;

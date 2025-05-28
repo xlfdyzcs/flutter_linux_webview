@@ -85,24 +85,18 @@ FlutterWebviewHandler::FlutterWebviewHandler(
 }
 
 bool FlutterWebviewHandler::OnBeforePopup(
-    CefRefPtr<CefBrowser> browser,
-    CefRefPtr<CefFrame> frame,
-    const CefString& target_url,
-    const CefString& target_frame_name,
-    WindowOpenDisposition target_disposition,
-    bool user_gesture,
+    CefRefPtr<CefBrowser> parentBrowser,
     const CefPopupFeatures& popupFeatures,
     CefWindowInfo& windowInfo,
+    const CefString& url,
     CefRefPtr<CefClient>& client,
-    CefBrowserSettings& settings,
-    CefRefPtr<CefDictionaryValue>& extra_info,
-    bool* no_javascript_access) {
+    CefBrowserSettings& settings) {
   CEF_REQUIRE_UI_THREAD();
 
-  VLOG(1) << __func__ << ": Loading popup in the main window: target_url="
-          << target_url.ToString().c_str();
-  if (!target_url.empty()) {
-    browser->GetMainFrame()->LoadURL(target_url);
+  VLOG(1) << __func__ << ": Loading popup in the main window: url="
+          << url.ToString().c_str();
+  if (!url.empty()) {
+    parentBrowser->GetMainFrame()->LoadURL(url);
   }
 
   // Block popup

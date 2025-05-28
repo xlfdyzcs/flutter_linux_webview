@@ -40,6 +40,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <cstdint>
+#include <cuchar>
 
 #include "flutter_linux_webview/flutter_webview_types.h"
 #include "flutter_webview_app.h"
@@ -500,8 +502,8 @@ void FlutterWebviewController::SendKey(WebviewId webview_id,
                                        int windowsKeyCode,
                                        int nativeKeyCode,
                                        bool isSystemKey,
-                                       char16 character,
-                                       char16 unmodifiedCharacter,
+                                       char16_t character,
+                                       char16_t unmodifiedCharacter,
                                        const DoneCBVoid& done_cb) {
   CEF_REQUIRE_UI_THREAD();
 
