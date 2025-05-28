@@ -92,7 +92,7 @@ class FlutterWebviewController {
   static void SendMouseMove(WebviewId webview_id,
                             int x,
                             int y,
-                            uint32 modifiers,
+                            uint32_t modifiers,
                             bool mouseLeave,
                             const DoneCBVoid& done_cb);
 
@@ -100,7 +100,7 @@ class FlutterWebviewController {
   static void SendMouseWheel(WebviewId webview_id,
                              int x,
                              int y,
-                             uint32 modifiers,
+                             uint32_t modifiers,
                              int deltaX,
                              int deltaY,
                              const DoneCBVoid& done_cb);
@@ -109,7 +109,7 @@ class FlutterWebviewController {
   static void SendMouseClick(WebviewId webview_id,
                              int x,
                              int y,
-                             uint32 modifiers,
+                             uint32_t modifiers,
                              int mouseButtonType,
                              bool mouseUp,
                              int clickCount,
@@ -118,7 +118,7 @@ class FlutterWebviewController {
   // Sends a key event to the browser specified by |webview_id|.
   static void SendKey(WebviewId webview_id,
                       int keyEventType,
-                      uint32 modifiers,
+                      uint32_t modifiers,
                       int windowsKeyCode,
                       int nativeKeyCode,
                       bool isSystemKey,
