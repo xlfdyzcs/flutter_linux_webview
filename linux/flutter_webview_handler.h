@@ -78,16 +78,11 @@ class FlutterWebviewHandler : public CefClient,
 
   // CefLifeSpanHandler methods:
   virtual bool OnBeforePopup(CefRefPtr<CefBrowser> browser,
-                             CefRefPtr<CefFrame> frame,
-                             const CefString& target_url,
-                             const CefString& target_frame_name,
-                             cef_window_open_disposition_t target_disposition,
-                             bool user_gesture,
-                             const CefPopupFeatures& popupFeatures,
-                             CefWindowInfo& windowInfo,
-                             CefRefPtr<CefClient>& client,
-                             CefBrowserSettings& settings,
-                             bool* no_javascript_access) override;
+                       const CefPopupFeatures& popupFeatures,
+                       CefWindowInfo& windowInfo,
+                       CefString& url,
+                       CefRefPtr<CefClient>& client,
+                       CefBrowserSettings& settings) override;
   virtual void OnAfterCreated(CefRefPtr<CefBrowser> browser) override;
   virtual bool DoClose(CefRefPtr<CefBrowser> browser) override;
   virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser) override;

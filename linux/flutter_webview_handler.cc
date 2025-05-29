@@ -84,27 +84,33 @@ FlutterWebviewHandler::FlutterWebviewHandler(
   }
 }
 
-bool FlutterWebviewHandler::OnBeforePopup(
-    CefRefPtr<CefBrowser> browser,
-    CefRefPtr<CefFrame> frame,
-    const CefString& target_url,
-    const CefString& target_frame_name,
-    cef_window_open_disposition_t target_disposition,
-    bool user_gesture,
-    const CefPopupFeatures& popupFeatures,
-    CefWindowInfo& windowInfo,
-    CefRefPtr<CefClient>& client,
-    CefBrowserSettings& settings,
-    bool* no_javascript_access) {
+bool FlutterWebviewHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
+                                        const CefPopupFeatures& popupFeatures,
+                                        CefWindowInfo& windowInfo,
+                                        CefString& url,
+                                        CefRefPtr<CefClient>& client,
+                                        CefBrowserSettings& settings) {
   CEF_REQUIRE_UI_THREAD();
 
-  VLOG(1) << __func__ << ": Loading popup in the main window: url="
-          << target_url.ToString().c_str();
-  if (!target_url.empty()) {
-    browser->GetMainFrame()->LoadURL(target_url);
+  // Get the FlutterWebviewController instance that owns this handler
+  auto controller = controller_.lock();
+  if (!controller) {
+    // This should not happen
+    LOG_ERROR(
+        "FlutterWebviewHandler::OnBeforePopup: controller_ is not available");
+    return true;  // Block the popup
   }
 
-  // Block popup
+  // If the popup is for a new window, load the URL in the main frame instead
+  // and block the popup.
+  // TODO(Ino): Consider allowing popups to be opened in a new window if the
+  // user explicitly requests it.
+  if (!url.empty()) {
+    LOG_INFO("FlutterWebviewHandler::OnBeforePopup: url=" << url.ToString());
+    controller->LoadUrl(url.ToString());
+  }
+
+  // Block all popups
   return true;
 }
 
